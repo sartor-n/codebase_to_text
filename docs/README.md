@@ -36,6 +36,7 @@ Parameters
 --input: Input path (local folder or GitHub URL).
 --output: Output file path.
 --output_type: Output file type (txt or docx).
+--file_extensions: List of file externsions that are included in the export - Default .py
 Examples
 Convert a local codebase to a text file:
 
