@@ -1,63 +1,75 @@
-# Codebase to Text Converter
 
-Converts a codebase (folder structure with files) into a single text file or a Microsoft Word document (.docx), preserving folder structure and file contents.
+# Codebase to Text
+
+This tool allows you to convert a codebase into a text format, with options to include or exclude certain files based on their extensions. It supports both plain text and DOCX output formats. 
 
 ## Features
 
-- Supports conversion of local codebase or GitHub repositories.
-- Retains folder structure in a tree-like format.
-- Extracts file contents and metadata.
-- Supports multiple file types including text files (.txt) and Microsoft Word documents (.docx).
+- Parse a directory and output its structure and contents to a text or DOCX file.
+- Exclude hidden files from processing.
+- Specify file extensions to include only certain types of files.
+- Handle both local directories and GitHub repositories as input sources.
 
 ## Installation
 
-You can install the package using pip:
+Make sure you have Python 3.x installed. You also need to install the required dependencies:
 
 ```bash
-pip install codebase-to-text
+pip install -r requirements.txt
+```
 
-Usage
-Command-line Interface (CLI)
-You can use the package via the command line interface (CLI):
+## Usage
 
-codebase-to-text --input "path_or_github_url" --output "output_path" --output_type "txt"
+You can use this tool either as a Python module or through the command line interface (CLI).
 
+### Command Line Interface (CLI)
 
-Pythonic Way
-You can also use it programmatically in your Python code:
+Use the following arguments:
 
+- `--input`: The input path, which can be a local folder or a GitHub repository URL.
+- `--output`: The path where the output file will be saved.
+- `--output_type`: The format of the output file, either `txt` or `docx`. Defaults to `txt`.
+- `--exclude_hidden`: Exclude hidden files and folders from processing. (Default: False)
+- `--verbose`: Display detailed processing information. (Default: False)
+- `--file_extensions`: Specify which file extensions to include in the output. Provide a comma-separated list of extensions. (Default: `[".py"]`)
+
+#### Example CLI Usage
+
+```bash
+codebase_to_text --input your_folder_path --output output.txt --output_type txt --exclude_hidden True --file_extensions .py,.txt
+```
+
+This command will generate a text file `output.txt` from the specified folder, including only Python and text files, while excluding hidden files.
+
+### Python Module
+
+You can also use this tool directly as a Python module:
+
+```python
 from codebase_to_text import CodebaseToText
 
-code_to_text = CodebaseToText(input_path="path_or_github_url", output_path="output_path", output_type="txt")
+code_to_text = CodebaseToText(
+    input_path="your_folder_path",
+    output_path="output.txt",
+    output_type="txt",
+    exclude_hidden=True,
+    file_extensions=[".py", ".txt"]
+)
+
 code_to_text.get_file()
+```
+
+## Testing
+
+Unit tests are included to validate the functionality. To run the tests:
+
+```bash
+python -m unittest discover -s tests
+```
+
+This will execute the tests in the `tests` directory.
 
 
-Parameters
---input: Input path (local folder or GitHub URL).
---output: Output file path.
---output_type: Output file type (txt or docx).
---file_extensions: List of file externsions that are included in the export - Default .py
-Examples
-Convert a local codebase to a text file:
+## License
 
-codebase-to-text --input "~/projects/my_project" --output "output.txt" --output_type "txt"
-
-
-Convert a GitHub repository to a Microsoft Word document:
-
-codebase-to-text --input "https://github.com/username/repo_name" --output "output.docx" --output_type "docx"
-
-Contributing
-Contributions are welcome! Please follow these steps:
-
-Fork the repository.
-Create a new branch (git checkout -b feature_branch).
-Make your changes.
-Commit your changes (git commit -am 'Add new feature').
-Push to the branch (git push origin feature_branch).
-Create a new Pull Request.
-License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-
-Feel free to customize this template to better suit your project's specifics. Ensure you update placeholders like `"path_or_github_url"`, `"output_path"`, `"txt"`, and `"docx"` with actual values and add any additional sections or information that you think would be useful for your users.
+This project is licensed under the MIT License.

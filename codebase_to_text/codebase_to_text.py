@@ -14,7 +14,7 @@ class CodebaseToText(BaseModel):
     output_type: Literal["txt", "docx"]
     verbose: bool = Field(default=False)
     exclude_hidden: bool = Field(default=False)
-    file_extensions: List[str] = Field(default_factory=lambda: [".py"])
+    file_extensions: List[str] = Field(default= [".py"])
     temp_folder_path: Optional[str] = None
 
     @field_validator("input_path")
@@ -37,13 +37,13 @@ class CodebaseToText(BaseModel):
 
     def _parse_folder(self, folder_path: str) -> str:
         tree = ""
-        for root, dirs, files in os.walk(folder_path):
+        for root, _, files in os.walk(folder_path):
             level = root.replace(folder_path, "").count(os.sep)
             indent = " " * 4 * (level)
-            tree += "{}{}/\n".format(indent, os.path.basename(root))
+            tree += f"{indent}{os.path.basename(root)}/\n"
             subindent = " " * 4 * (level + 1)
             for f in files:
-                tree += "{}{}\n".format(subindent, f)
+                tree += f"{subindent}{f}\n"
 
         if self.verbose:
             print(f"The file tree to be processed:\n {tree}")
@@ -51,7 +51,7 @@ class CodebaseToText(BaseModel):
         return tree
 
     def _get_file_contents(self, file_path: str) -> str:
-        with open(file_path, "r") as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             return file.read()
 
     def _is_hidden_file(self, file_path: str) -> bool:
@@ -112,7 +112,7 @@ class CodebaseToText(BaseModel):
     def get_file(self) -> None:
         text = self.get_text()
         if self.output_type == "txt":
-            with open(self.output_path, "w") as file:
+            with open(self.output_path, "w", encoding="utf-8") as file:
                 file.write(text)
         elif self.output_type == "docx":
             doc = Document()
@@ -148,7 +148,7 @@ def main():
     )
     parser.add_argument("--output", help="Output file path", required=True)
     parser.add_argument(
-        "--output_type", help="Output file type (txt or docx)", required=True
+        "--output_type", help="Output file type (txt or docx)", required=False, default="txt"
     )
     parser.add_argument(
         "--exclude_hidden",
@@ -164,6 +164,14 @@ def main():
         type=bool,
         default=False,
     )
+    parser.add_argument(
+        "--file_extensions",
+        help="Include full text of files with listed extensions only",
+        nargs="*",
+        required=False,
+        type=str,
+        default=[".py"],
+    )
     args = parser.parse_args()
 
     try:
@@ -173,6 +181,7 @@ def main():
             output_type=args.output_type,
             verbose=args.verbose,
             exclude_hidden=args.exclude_hidden,
+            file_extensions=args.file_extensions
         )
         code_to_text.get_file()
     except ValidationError as e:
